@@ -16,6 +16,7 @@ import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod.GET
 import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.HttpStatus.OK
 import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED
 import org.springframework.http.MediaType.APPLICATION_JSON
@@ -74,6 +75,8 @@ class Lufthansa {
 	)
 
 	constructor(key: String, secret: String, restTemplate: RestTemplate) {
+		restTemplate.errorHandler = LufthansaClientErrorHandler()
+
 		this.key = key
 		this.secret = secret
 		this.restTemplate = restTemplate
@@ -97,6 +100,9 @@ class Lufthansa {
 				apiMapper
 					.readValue<FlightStatusResponse>(responseEntity.body, TYPE_FLIGHT_STATUS_RESPONSE)
 					.flightStatusResource!!
+			}
+			NOT_FOUND -> {
+				FlightStatusResource()
 			}
 			else -> {
 				throw RuntimeException("Could not retrieve flight status")
