@@ -7,9 +7,11 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.UPPER_CAMEL_CASE
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import ee.smmv.dlh.collection.ScheduleCollection
 import ee.smmv.dlh.model.AccessToken
 import ee.smmv.dlh.resource.FlightStatusResource
 import ee.smmv.dlh.response.FlightStatusResponse
+import ee.smmv.dlh.response.ScheduleResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpEntity
@@ -32,6 +34,7 @@ import java.net.URI
 import java.net.URL
 import java.nio.charset.StandardCharsets
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
 
@@ -42,8 +45,10 @@ class Lufthansa {
 
 		@JvmStatic private val TYPE_ACCESS_TOKEN = object: TypeReference<AccessToken>() {}
 		@JvmStatic private val TYPE_FLIGHT_STATUS_RESPONSE = object: TypeReference<FlightStatusResponse>() {}
+		@JvmStatic private val TYPE_SCHEDULE_RESPONSE = object: TypeReference<ScheduleResponse>() {}
 
 		@JvmStatic private val DATE_FORMATTER: DateTimeFormatter = ISO_LOCAL_DATE
+		@JvmStatic private val DATETIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
 
 		@JvmStatic private val LOG: Logger = LoggerFactory.getLogger(Lufthansa::class.java)
 	}
@@ -82,6 +87,66 @@ class Lufthansa {
 		this.restTemplate = restTemplate
 	}
 
+	fun flightSchedules(origin: String, destination: String, date: LocalDate): ScheduleResponse {
+		LOG.trace("Lookup for schedules from $origin to $destination at $date")
+
+		return flightSchedules(urlFor("v1/operations/schedules/$origin/$destination/${DATE_FORMATTER.format(date)}"))
+	}
+
+	fun flightSchedules(origin: String, destination: String, date: LocalDate, directFlights: Boolean): ScheduleResponse {
+		LOG.trace("Lookup for schedules from $origin to $destination at $date")
+
+		return flightSchedules(
+			urlFor("v1/operations/schedules/$origin/$destination/${DATE_FORMATTER.format(date)}",
+				mapOf(
+					"directFlights" to directFlights.toString()
+				)
+			)
+		)
+	}
+
+	fun flightSchedules(origin: String, destination: String, dateTime: LocalDateTime): ScheduleResponse {
+		LOG.trace("Lookup for schedules from $origin to $destination at $dateTime")
+
+		return flightSchedules(urlFor("v1/operations/schedules/$origin/$destination/${DATETIME_FORMATTER.format(dateTime)}"))
+	}
+
+	fun flightSchedules(origin: String, destination: String, dateTime: LocalDateTime, directFlights: Boolean): ScheduleResponse {
+		LOG.trace("Lookup for schedules from $origin to $destination at $dateTime")
+
+		return flightSchedules(
+			urlFor("v1/operations/schedules/$origin/$destination/${DATETIME_FORMATTER.format(dateTime)}",
+				mapOf(
+					"directFlights" to directFlights.toString()
+				)
+			)
+		)
+	}
+
+	private fun flightSchedules(url: URI): ScheduleResponse {
+		var token = getAccessToken()
+
+		val headers = HttpHeaders()
+		headers.accept = mutableListOf(APPLICATION_JSON)
+		headers.setBearerAuth(token.accessToken!!)
+
+		val requestEntity = HttpEntity<String>(headers)
+		val responseEntity = restTemplate.exchange(url, GET, requestEntity, String::class.java)
+
+		return when (responseEntity.statusCode) {
+			OK -> {
+				apiMapper
+					.readValue<ScheduleResponse>(responseEntity.body, TYPE_SCHEDULE_RESPONSE)
+			}
+			NOT_FOUND -> {
+				ScheduleResponse(ScheduleCollection())
+			}
+			else -> {
+				throw RuntimeException("Could not retrieve flight status")
+			}
+		}
+	}
+
 	fun flightStatusByDate(flightNumber: String, date: LocalDate): FlightStatusResource {
 		LOG.trace("Lookup for flight status of $flightNumber")
 
@@ -90,7 +155,7 @@ class Lufthansa {
 
 		val headers = HttpHeaders()
 		headers.accept = mutableListOf(APPLICATION_JSON)
-		headers.setBearerAuth(token.accessToken)
+		headers.setBearerAuth(token.accessToken!!)
 
 		val requestEntity = HttpEntity<String>(headers)
 		val responseEntity = restTemplate.exchange(url, GET, requestEntity, String::class.java)

@@ -34,4 +34,9 @@ String secret = "%API_SECRET%";
 Lufthansa lh = new Lufthansa(key, secret);
 
 lh.flightStatusByDate("LH454", LocalDate.now());
+
+lh.flightSchedules("FRA", "NYC", LocalDate.now());
+lh.flightSchedules("FRA", "NYC", LocalDate.now(), true);
+lh.flightSchedules("FRA", "NYC", LocalDateTime.now());
+lh.flightSchedules("FRA", "NYC", LocalDateTime.now(), true);
 ```

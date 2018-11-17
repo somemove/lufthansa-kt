@@ -6,6 +6,7 @@ data class Flight(
 	var marketingCarrier: Carrier? = null,
 	var operatingCarrier: Carrier? = null,
 	var equipment: Equipment? = null,
+	var details: Details? = null,
 	var flightStatus: StatusCode? = null,
 	var serviceType: String? = null
 )
