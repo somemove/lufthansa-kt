@@ -90,11 +90,17 @@ class Lufthansa {
 	fun flightSchedules(origin: String, destination: String, date: LocalDate): ScheduleResponse {
 		LOG.trace("Lookup for schedules from $origin to $destination at $date")
 
+		origin.validateIataCode()
+		destination.validateIataCode()
+
 		return flightSchedules(urlFor("v1/operations/schedules/$origin/$destination/${DATE_FORMATTER.format(date)}"))
 	}
 
 	fun flightSchedules(origin: String, destination: String, date: LocalDate, directFlights: Boolean): ScheduleResponse {
 		LOG.trace("Lookup for schedules from $origin to $destination at $date")
+
+		origin.validateIataCode()
+		destination.validateIataCode()
 
 		return flightSchedules(
 			urlFor("v1/operations/schedules/$origin/$destination/${DATE_FORMATTER.format(date)}",
@@ -108,11 +114,17 @@ class Lufthansa {
 	fun flightSchedules(origin: String, destination: String, dateTime: LocalDateTime): ScheduleResponse {
 		LOG.trace("Lookup for schedules from $origin to $destination at $dateTime")
 
+		origin.validateIataCode()
+		destination.validateIataCode()
+
 		return flightSchedules(urlFor("v1/operations/schedules/$origin/$destination/${DATETIME_FORMATTER.format(dateTime)}"))
 	}
 
 	fun flightSchedules(origin: String, destination: String, dateTime: LocalDateTime, directFlights: Boolean): ScheduleResponse {
 		LOG.trace("Lookup for schedules from $origin to $destination at $dateTime")
+
+		origin.validateIataCode()
+		destination.validateIataCode()
 
 		return flightSchedules(
 			urlFor("v1/operations/schedules/$origin/$destination/${DATETIME_FORMATTER.format(dateTime)}",
