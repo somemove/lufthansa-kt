@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.UPPER_CAMEL_CASE
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import ee.smmv.dlh.model.AccessToken
-import ee.smmv.dlh.model.FlightStatusResource
+import ee.smmv.dlh.resource.FlightStatusResource
 import ee.smmv.dlh.response.FlightStatusResponse
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
