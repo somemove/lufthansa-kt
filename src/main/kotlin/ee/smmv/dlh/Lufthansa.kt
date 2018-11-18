@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.UPPER_CAMEL_CASE
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import ee.smmv.dlh.collection.ScheduleCollection
+import ee.smmv.dlh.extension.validateDateInRange
 import ee.smmv.dlh.model.AccessToken
 import ee.smmv.dlh.resource.FlightStatusResource
 import ee.smmv.dlh.response.FlightStatusResponse
@@ -160,7 +161,9 @@ class Lufthansa {
 	}
 
 	fun flightStatusByDate(flightNumber: String, date: LocalDate): FlightStatusResource {
-		LOG.trace("Lookup for flight status of $flightNumber")
+		LOG.trace("Lookup for flight status of $flightNumber at $date")
+
+		date.validateDateInRange(-1, 5)
 
 		val token = getAccessToken()
 		val url = urlFor("v1/operations/flightstatus/$flightNumber/${DATE_FORMATTER.format(date)}")
