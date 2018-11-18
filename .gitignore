@@ -6,4 +6,4 @@ out/*
 
 *.iml
 
-src/test/java/ee/smmv/dlh/LufthansaLiveApiTests.java
+src/test/resources/private/*

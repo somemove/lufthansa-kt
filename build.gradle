@@ -12,9 +12,8 @@ buildscript {
 		spring_version = '5.1.2.RELEASE'
 		sl4j_version = '1.7.+'
 		jackson_version = '2.9.+'
-		junit_version = '5.0.0'
-		junit_vintage_version = '4.12.0'
-		junit_platform_version = '1.0.0'
+		junit_version = '5.+'
+		junit_platform_version = '1.+'
 	}
 
 	repositories {
@@ -52,13 +51,9 @@ dependencies {
 	testRuntime ("org.junit.platform:junit-platform-launcher:$junit_platform_version")
 	testRuntime ("org.junit.platform:junit-platform-runner:$junit_platform_version")
 	testCompile ("org.junit.jupiter:junit-jupiter-engine:$junit_version")
-	testCompile ("org.junit.vintage:junit-vintage-engine:$junit_vintage_version")
+	testCompile ("org.junit.jupiter:junit-jupiter-params:$junit_version")
 
 	testRuntime ("org.slf4j:slf4j-simple:$sl4j_version")
-}
-
-junitPlatform {
-	platformVersion '1.0.0'
 }
 
 version = '0.0.2'
@@ -72,5 +67,26 @@ jar {
 			'Implementation-Title': project.name,
 			'Implementation-Version': project.version
 		)
+	}
+}
+
+compileKotlin {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+
+	kotlinOptions {
+		jvmTarget = "1.8"
+		apiVersion = "1.3"
+		languageVersion = "1.3"
+	}
+}
+compileTestKotlin {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+
+	kotlinOptions {
+		jvmTarget = "1.8"
+		apiVersion = "1.3"
+		languageVersion = "1.3"
 	}
 }

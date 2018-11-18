@@ -27,7 +27,7 @@ dependencies {
 
 ## Example
 
-```
+```java
 String key = "%API_KEY%";
 String secret = "%API_SECRET%";
 
@@ -40,3 +40,14 @@ lh.flightSchedules("FRA", "NYC", LocalDate.now(), true);
 lh.flightSchedules("FRA", "NYC", LocalDateTime.now());
 lh.flightSchedules("FRA", "NYC", LocalDateTime.now(), true);
 ```
+
+##  Testing the SDK
+
+To run the unit tests locally, a key and secret must be obtained from Lufthansa Group Developers website. When available, create a file `api-credentials.properties` at `src/test/resources/private` folder with given content:
+
+```
+key=YOUR_API_KEY
+secret=YOUR_API_SECRET
+```
+
+**The file is required to run unit test case of SDK.** And it is ignored by Git.
