@@ -1,9 +1,11 @@
 .gradle/*
 .idea/*
+.settings/*
 .vscode/*
 build/*
 out/*
 
 *.iml
+.project
 
 src/test/resources/private/*
